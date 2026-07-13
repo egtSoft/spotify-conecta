@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotify Conecta - Prototipo inicial en lenguaje natural</title>
+  <style>
+    :root {
+      --bg: #080b0a;
+      --panel: #111614;
+      --panel-2: #171d1a;
+      --text: #f7f8f7;
+      --muted: #b5bcb8;
+      --accent: #38d878;
+      --accent-dark: #1eaa58;
+      --line: rgba(255,255,255,.11);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 82% 8%, rgba(56,216,120,.18), transparent 28%),
+        radial-gradient(circle at 12% 18%, rgba(45,108,255,.10), transparent 24%),
+        var(--bg);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; }
+    button, input, select { font: inherit; }
+
+    .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: grid;
+      place-items: center;
+      color: #041007;
+      font-size: 18px;
+      box-shadow: 0 0 0 6px rgba(56,216,120,.09);
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      color: var(--muted);
+      font-size: 13px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 56px;
+      align-items: center;
+      min-height: 680px;
+      padding: 38px 0 72px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #ccf8dc;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 8px 12px;
+      border: 1px solid rgba(56,216,120,.24);
+      background: rgba(56,216,120,.08);
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(46px, 6vw, 76px);
+      line-height: .98;
+      letter-spacing: -.055em;
+      max-width: 780px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .hero-copy {
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 21px);
+      max-width: 700px;
+      margin: 26px 0 0;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      line-height: 1.2;
+      border: 0;
+      border-radius: 999px;
+      padding: 15px 24px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #041007;
+      box-shadow: 0 14px 35px rgba(56,216,120,.22);
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); background: #49e589; }
+
+    .microcopy {
+      color: #8f9893;
+      font-size: 13px;
+      margin-top: 11px;
+    }
+
+    .flowline {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 28px;
+      color: #dce3df;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .flowline .dot { color: var(--accent); }
+
+    .experience {
+      position: relative;
+      min-height: 500px;
+      display: grid;
+      place-items: center;
+    }
+
+    .phone {
+      width: min(390px, 100%);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 34px;
+      padding: 18px;
+      background: linear-gradient(180deg, #181f1b 0%, #0e1311 100%);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(56,216,120,.18), transparent 34%);
+      pointer-events: none;
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      color: #b9c2bd;
+      font-size: 12px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .context-chip {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border-radius: 999px;
+      padding: 8px 11px;
+      background: rgba(56,216,120,.1);
+      border: 1px solid rgba(56,216,120,.2);
+      color: #d8fce5;
+      font-size: 12px;
+      font-weight: 750;
+      position: relative;
+    }
+
+    .match-card {
+      margin-top: 16px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.11);
+      border-radius: 24px;
+      padding: 18px;
+      position: relative;
+    }
+
+    .avatars { display: flex; align-items: center; margin-bottom: 15px; }
+    .avatar {
+      width: 46px; height: 46px; border-radius: 50%;
+      display: grid; place-items: center; font-weight: 900;
+      color: #07100a;
+      border: 3px solid #151b18;
+    }
+    .avatar.a { background: #f6c667; }
+    .avatar.b { background: #8ed0ff; margin-left: -8px; }
+    .equal { margin-left: auto; color: var(--accent); font-size: 12px; font-weight: 800; }
+
+    .match-title { font-size: 14px; color: #aeb7b2; margin: 0 0 4px; }
+    .artist { margin: 0; font-size: 24px; letter-spacing: -.03em; }
+
+    .wave {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 46px;
+      margin: 15px 0;
+    }
+    .wave span { width: 5px; border-radius: 8px; background: var(--accent); opacity: .9; }
+    .wave span:nth-child(1){height:12px}.wave span:nth-child(2){height:26px}.wave span:nth-child(3){height:36px}.wave span:nth-child(4){height:22px}.wave span:nth-child(5){height:42px}.wave span:nth-child(6){height:28px}.wave span:nth-child(7){height:16px}.wave span:nth-child(8){height:33px}.wave span:nth-child(9){height:21px}.wave span:nth-child(10){height:38px}.wave span:nth-child(11){height:24px}.wave span:nth-child(12){height:14px}
+
+    .icebreaker {
+      border-radius: 18px;
+      padding: 14px;
+      background: #eaf8ef;
+      color: #0f1d14;
+      font-weight: 750;
+      font-size: 15px;
+    }
+
+    .consent {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-top: 14px;
+      color: #b4bdb8;
+      font-size: 12px;
+    }
+
+    .consent b { color: #f2f5f3; }
+
+    .floating {
+      position: absolute;
+      border-radius: 18px;
+      background: rgba(17,22,20,.94);
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      color: #e3e9e5;
+    }
+    .floating.one { left: -18px; top: 70px; transform: rotate(-3deg); }
+    .floating.two { right: -16px; bottom: 78px; transform: rotate(3deg); }
+    .floating b { color: var(--accent); }
+
+    section { padding: 90px 0; }
+    .section-label { color: var(--accent); font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; }
+    h2 { font-size: clamp(34px, 5vw, 56px); line-height: 1.02; letter-spacing: -.045em; margin: 12px 0 18px; }
+    .section-intro { color: var(--muted); max-width: 730px; font-size: 18px; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025));
+      min-height: 225px;
+    }
+
+    .icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: grid; place-items: center;
+      background: rgba(56,216,120,.12);
+      color: var(--accent);
+      font-size: 21px;
+      margin-bottom: 18px;
+    }
+    .card h3 { font-size: 22px; margin: 0 0 9px; letter-spacing: -.025em; }
+    .card p { color: var(--muted); margin: 0; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 34px; }
+    .step { border-top: 1px solid var(--line); padding-top: 20px; }
+    .step-number { color: var(--accent); font-weight: 900; font-size: 13px; }
+    .step h3 { font-size: 21px; margin: 10px 0 8px; }
+    .step p { color: var(--muted); margin: 0; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: .85fr 1.15fr;
+      gap: 34px;
+      align-items: stretch;
+    }
+
+    .comparison-box {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+    .comparison-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .comparison-row:last-child { border-bottom: 0; background: rgba(56,216,120,.06); }
+    .comparison-row b { font-size: 14px; }
+    .comparison-row span { color: var(--muted); font-size: 14px; }
+
+    .trust {
+      border: 1px solid rgba(56,216,120,.18);
+      background: linear-gradient(135deg, rgba(56,216,120,.08), rgba(255,255,255,.03));
+      border-radius: 28px;
+      padding: 34px;
+    }
+    .trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 24px; margin-top: 22px; }
+    .trust-item { display: flex; gap: 10px; align-items: flex-start; color: #dfe6e2; }
+    .check { color: var(--accent); font-weight: 900; }
+
+    .cta-panel {
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      padding: 54px 24px;
+      background: radial-gradient(circle at 50% 0%, rgba(56,216,120,.16), transparent 38%), var(--panel);
+    }
+    .cta-panel p { color: var(--muted); max-width: 620px; margin: 0 auto 24px; font-size: 18px; }
+
+    footer { padding: 28px 0 40px; color: #87908b; font-size: 13px; text-align: center; }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.76);
+      display: none;
+      place-items: center;
+      z-index: 20;
+      padding: 20px;
+    }
+    .modal.open { display: grid; }
+    .modal-card {
+      width: min(520px, 100%);
+      background: #121714;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+    .modal-head { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+    .modal h3 { margin: 0; font-size: 26px; }
+    .close { background: transparent; border: 0; color: white; font-size: 24px; cursor: pointer; }
+    label { display: block; font-size: 13px; font-weight: 750; margin: 16px 0 7px; }
+    input, select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #0c100e;
+      color: white;
+      padding: 13px 14px;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: rgba(56,216,120,.58); }
+    .privacy { color: #9da6a1; font-size: 12px; margin: 14px 0; }
+    .success { display: none; padding: 18px; border-radius: 16px; background: rgba(56,216,120,.1); border: 1px solid rgba(56,216,120,.25); color: #dff8e8; }
+
+    @media (max-width: 900px) {
+      .hero, .compare { grid-template-columns: 1fr; }
+      .hero { gap: 26px; min-height: unset; padding-top: 24px; }
+      .experience { min-height: 450px; }
+      .cards, .steps { grid-template-columns: 1fr; }
+      .floating.one { left: 0; }
+      .floating.two { right: 0; }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 24px, 1160px); }
+      .topbar { padding: 16px 0; }
+      .badge { display: none; }
+      h1 { font-size: 47px; }
+      .hero-copy { font-size: 17px; }
+      .phone { width: 100%; border-radius: 27px; }
+      .floating { display: none; }
+      section { padding: 70px 0; }
+      .trust-grid { grid-template-columns: 1fr; }
+      .comparison-row { grid-template-columns: 1fr; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="brand-mark">♪</span> Spotify Conecta</div>
+      <span class="badge">Concepto académico experimental</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero wrap" id="inicio">
+      <div>
+        <div class="eyebrow">● La música también puede ayudarte a conocer gente</div>
+        <h1>Tu próxima conversación puede empezar con <span>una canción.</span></h1>
+        <p class="hero-copy">Elige qué quieres mostrar, activa tu tarjeta por un rato y descubre si alguien cerca comparte tus gustos. Si hay algo en común, te damos una pregunta sencilla para empezar a hablar.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-open-modal>Quiero probarlo</button>
+        </div>
+        <div class="microcopy">Es una prueba académica. No cuesta nada.</div>
+        <div class="flowline"><span>Elige</span><span class="dot">→</span><span>activa</span><span class="dot">→</span><span>encuentra algo en común</span><span class="dot">→</span><span>saluda</span></div>
+      </div>
+
+      <div class="experience" aria-label="Ejemplo visual de la experiencia">
+        <div class="floating one"><b>Contexto:</b> Café de barrio</div>
+        <div class="floating two"><b>Visible:</b> 45 minutos</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>Spotify Conecta</span><span>●●●</span></div>
+          <div class="context-chip">● Activa ahora · Café · 45 min</div>
+          <div class="match-card">
+            <div class="avatars">
+              <div class="avatar a">M</div>
+              <div class="avatar b">V</div>
+              <span class="equal">TIENEN ALGO EN COMÚN</span>
+            </div>
+            <p class="match-title">Ambos escuchan</p>
+            <h3 class="artist">Diamante Eléctrico</h3>
+            <div class="wave" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="icebreaker">“¿Qué canción pondrías para recorrer Bogotá?”</div>
+            <div class="consent"><span>✓</span><span>Esto solo aparece si <b>los dos quieren conversar</b>.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="section-label">Para qué sirve</div>
+        <h2>Conocer gente no debería sentirse tan raro.</h2>
+        <p class="section-intro">A veces no falta interés. Falta una buena forma de empezar. Spotify Conecta usa la música que tú eliges para ayudarte a dar ese primer paso.</p>
+        <div class="cards">
+          <article class="card"><div class="icon">💬</div><h3>Algo de qué hablar</h3><p>Si ambos comparten un artista, una canción o un podcast, aparece una pregunta sencilla para empezar.</p></article>
+          <article class="card"><div class="icon">📍</div><h3>Úsala donde te haga sentido</h3><p>Puede ser en la universidad, un café, el trabajo, una comunidad virtual, un evento, el gimnasio o durante un trayecto.</p></article>
+          <article class="card"><div class="icon">⏳</div><h3>Solo por el tiempo que quieras</h3><p>La tarjeta se apaga sola cuando termina el tiempo que elegiste. No queda como un perfil público.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="section-label">Así de simple</div>
+        <h2>Tú eliges. Tú decides cuándo. La conversación empieza si ambos quieren.</h2>
+        <div class="steps">
+          <div class="step"><div class="step-number">01</div><h3>Arma tu tarjeta</h3><p>Elige de tres a cinco canciones, artistas o podcasts que sí quieras mostrar.</p></div>
+          <div class="step"><div class="step-number">02</div><h3>Actívala por un rato</h3><p>Escoge dónde quieres usarla y cuánto tiempo estará visible.</p></div>
+          <div class="step"><div class="step-number">03</div><h3>Encuentren algo en común</h3><p>Si los dos quieren conversar, Spotify muestra el gusto que comparten y una pregunta para empezar.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap compare">
+        <div>
+          <div class="section-label">¿Qué tiene de distinto?</div>
+          <h2>No es una playlist ni una app de citas.</h2>
+          <p class="section-intro">No se trata de publicar todo lo que escuchas ni de buscar pareja. Se trata de encontrar algo en común con alguien y tener una forma sencilla de empezar a hablar.</p>
+        </div>
+        <div class="comparison-box">
+          <div class="comparison-row"><b>Playlist compartida</b><span>Sirve para compartir música.</span></div>
+          <div class="comparison-row"><b>Perfil social</b><span>Muestra información sobre ti y suele quedar visible.</span></div>
+          <div class="comparison-row"><b>App de citas</b><span>Busca coincidencias, casi siempre con una intención romántica.</span></div>
+          <div class="comparison-row"><b>Spotify Conecta</b><span>Usa un gusto en común para empezar una conversación, solo cuando tú quieras.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap trust">
+        <div class="section-label">Tú tienes el control</div>
+        <h2>Nada se comparte sin que tú lo elijas.</h2>
+        <div class="trust-grid">
+          <div class="trust-item"><span class="check">✓</span><span>Tú escoges las canciones, artistas o podcasts que aparecen.</span></div>
+          <div class="trust-item"><span class="check">✓</span><span>Spotify no usa datos sensibles ni intenta adivinar cómo te sientes.</span></div>
+          <div class="trust-item"><span class="check">✓</span><span>Puedes ver tu tarjeta antes de activarla.</span></div>
+          <div class="trust-item"><span class="check">✓</span><span>Puedes pausarla, cambiarla o borrarla cuando quieras.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap cta-panel">
+        <div class="section-label">Únete a la prueba</div>
+        <h2>¿Te animas a empezar una conversación con música?</h2>
+        <p>Déjanos tus datos para invitarte a una futura prueba de Spotify Conecta.</p>
+        <button class="btn btn-primary" data-open-modal>Quiero probarlo</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">Prototipo académico no oficial · MAIT - Design Thinking y Lean Startup · Semana 6</footer>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="modal-title">Únete a la prueba</h3>
+        <button class="close" type="button" aria-label="Cerrar">×</button>
+      </div>
+      <form id="interest-form">
+        <label for="name">Nombre o alias</label>
+        <input id="name" name="name" required placeholder="Ej. Vale" />
+        <label for="email">Correo electrónico</label>
+        <input id="email" name="email" type="email" required placeholder="nombre@correo.com" />
+        <label for="context">¿Dónde la usarías?</label>
+        <select id="context" name="context" required>
+          <option value="">Selecciona una opción</option>
+          <option>Universidad</option><option>Café o espacio cultural</option><option>Oficina o coworking</option><option>Comunidad virtual</option><option>Gimnasio</option><option>Evento</option><option>Movilidad o ruta de transporte</option><option>Otro</option>
+        </select>
+        <p class="privacy">Esta es una prueba académica. Usaremos tus datos solo para registrar tu interés y, si aceptas, invitarte a una prueba futura.</p>
+        <button class="btn btn-primary" type="submit" style="width:100%">Quiero unirme</button>
+      </form>
+      <div class="success" id="success">¡Listo! Gracias por sumarte.</div>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modal');
+    const form = document.getElementById('interest-form');
+    const success = document.getElementById('success');
+    document.querySelectorAll('[data-open-modal]').forEach(btn => btn.addEventListener('click', () => {
+      modal.classList.add('open');
+      form.style.display = 'block';
+      success.style.display = 'none';
+    }));
+    document.querySelector('.close').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      form.style.display = 'none';
+      success.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
