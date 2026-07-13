@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spotify Conecta - Prototipo optimizado V2</title>
+  <title>Spotify Conecta - Prototipo optimizado V3</title>
   <style>
     :root {
       --bg: #080b0a;
@@ -412,6 +412,25 @@
     .privacy { color: #9da6a1; font-size: 12px; margin: 14px 0; }
     .success { display: none; padding: 18px; border-radius: 16px; background: rgba(56,216,120,.1); border: 1px solid rgba(56,216,120,.25); color: #dff8e8; }
 
+
+    .modal-kicker { margin: 0 0 4px; color: var(--accent); font-size: 12px; font-weight: 850; text-transform: uppercase; letter-spacing: .1em; }
+    .modal-intro { color: var(--muted); margin: 10px 0 2px; font-size: 14px; }
+    .check-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-weight: 500;
+      color: #dfe6e2;
+      line-height: 1.35;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+    .check-row input { width: 18px; height: 18px; margin-top: 1px; flex: 0 0 auto; accent-color: var(--accent); }
+    .success strong { display: inline-block; margin-bottom: 6px; }
+    .admin-tools { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .admin-tools p { color: var(--muted); font-size: 11px; margin: 6px 0 0; }
+    .admin-btn { width: 100%; background: transparent; color: var(--text); border: 1px solid var(--line); }
+
     @media (max-width: 900px) {
       .hero, .compare { grid-template-columns: 1fr; }
       .hero { gap: 26px; min-height: unset; padding-top: 24px; }
@@ -452,7 +471,7 @@
         <div class="hero-actions">
           <button class="btn btn-primary" data-open-modal>Quiero probarlo</button>
         </div>
-        <div class="microcopy">Es una prueba académica. No cuesta nada ni necesitas Spotify Premium para registrarte.</div>
+        <div class="microcopy">Es un concepto académico, no una función oficial de Spotify. Registrarte no cuesta nada ni requiere Spotify Premium.</div>
         <div class="promise-chips">
           <span class="promise-chip">✓ Tú eliges las canciones</span>
           <span class="promise-chip">✓ Nadie ve tu ubicación exacta</span>
@@ -542,34 +561,77 @@
       <div class="wrap cta-panel">
         <div class="section-label">Únete a la prueba</div>
         <h2>¿Te animas a empezar una conversación con música?</h2>
-        <p>Déjanos tu alias y correo para invitarte a una prueba académica cuando esté lista.</p>
+        <p>Déjanos tus datos para participar en una futura prueba académica. Registrarte no tiene costo y no requiere Spotify Premium.</p>
         <button class="btn btn-primary" data-open-modal>Quiero probarlo</button>
       </div>
     </section>
   </main>
 
-  <footer class="wrap">Prototipo académico optimizado V2 · No es una función oficial de Spotify · MAIT - Semana 6</footer>
+  <footer class="wrap">Prototipo académico optimizado V3 · No es una función oficial de Spotify · MAIT - Semana 6</footer>
 
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-card">
       <div class="modal-head">
-        <h3 id="modal-title">Prueba la idea antes que nadie</h3>
+        <div>
+          <p class="modal-kicker">Registro de interés</p>
+          <h3 id="modal-title">¿Te gustaría probar Spotify Conecta?</h3>
+        </div>
         <button class="close" type="button" aria-label="Cerrar">×</button>
       </div>
+      <p class="modal-intro">Déjanos tus datos para participar en una futura prueba académica. Este concepto no es una función oficial de Spotify.</p>
       <form id="interest-form">
-        <label for="name">Nombre o alias</label>
-        <input id="name" name="name" required placeholder="Ej. Vale" />
-        <label for="email">Correo electrónico</label>
+        <label for="name">¿Cómo quieres que te llamemos?</label>
+        <input id="name" name="name" required placeholder="Nombre o alias" />
+
+        <label for="email">¿A qué correo te enviaríamos una invitación?</label>
         <input id="email" name="email" type="email" required placeholder="nombre@correo.com" />
-        <label for="context">¿Dónde la usarías?</label>
+
+        <label for="context">¿Dónde te resultaría más útil?</label>
         <select id="context" name="context" required>
           <option value="">Selecciona una opción</option>
-          <option>Universidad</option><option>Café o espacio cultural</option><option>Oficina o coworking</option><option>Comunidad virtual</option><option>Gimnasio</option><option>Evento</option><option>Movilidad o ruta de transporte</option><option>Otro</option>
+          <option>Universidad</option>
+          <option>Café o espacio cultural</option>
+          <option>Oficina o coworking</option>
+          <option>Comunidad virtual</option>
+          <option>Gimnasio</option>
+          <option>Evento</option>
+          <option>Movilidad o ruta de transporte</option>
+          <option>Coliving o residencia compartida</option>
+          <option>Otro</option>
         </select>
-        <p class="privacy">Esta es una prueba académica. No necesitas Spotify Premium para registrarte. Usaremos tus datos solo para registrar tu interés e invitarte a una prueba futura.</p>
-        <button class="btn btn-primary" type="submit" style="width:100%">Quiero unirme</button>
+
+        <label for="motivation">¿Qué te interesa más de la propuesta?</label>
+        <select id="motivation" name="motivation" required>
+          <option value="">Selecciona una opción</option>
+          <option>Tener una pregunta sencilla para empezar a hablar</option>
+          <option>Encontrar personas con gustos musicales similares</option>
+          <option>Conocer gente sin usar una app de citas</option>
+          <option>Activarla solo en ciertos lugares o momentos</option>
+          <option>Controlar lo que comparto</option>
+          <option>Otro</option>
+        </select>
+
+        <label class="check-row" for="future-test">
+          <input id="future-test" name="future_test" type="checkbox" required />
+          <span>Sí, me interesa que me contacten para una futura prueba académica.</span>
+        </label>
+
+        <label class="check-row" for="consent-data">
+          <input id="consent-data" name="consent_data" type="checkbox" required />
+          <span>Acepto que estos datos se usen únicamente para este ejercicio académico y una posible invitación futura.</span>
+        </label>
+
+        <p class="privacy">No compartiremos tus datos con terceros ni los presentaremos con tu nombre en el informe.</p>
+        <button class="btn btn-primary" type="submit" style="width:100%">Quiero participar</button>
       </form>
-      <div class="success" id="success">¡Listo! Gracias por sumarte.</div>
+      <div class="success" id="success">
+        <strong>¡Listo! Ya estás en la lista de personas interesadas.</strong><br />
+        Gracias por participar en esta prueba académica. Si realizamos una siguiente prueba del concepto, podremos contactarte mediante el correo que registraste.
+      </div>
+      <div class="admin-tools" id="admin-tools" hidden>
+        <button type="button" id="export-csv" class="btn admin-btn">Exportar registros en CSV</button>
+        <p>Visible solo en modo administrador.</p>
+      </div>
     </div>
   </div>
 
@@ -577,17 +639,66 @@
     const modal = document.getElementById('modal');
     const form = document.getElementById('interest-form');
     const success = document.getElementById('success');
+    const adminTools = document.getElementById('admin-tools');
+    const exportBtn = document.getElementById('export-csv');
+    const STORAGE_KEY = 'spotify_conecta_v3_submissions';
+    const EVENT_KEY = 'spotify_conecta_v3_events';
+
+    function readStore(key) {
+      try { return JSON.parse(localStorage.getItem(key) || '[]'); }
+      catch (_) { return []; }
+    }
+
+    function writeStore(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+      catch (_) { return false; }
+    }
+
+    function logEvent(type) {
+      const events = readStore(EVENT_KEY);
+      events.push({ type, at: new Date().toISOString() });
+      writeStore(EVENT_KEY, events);
+    }
+
     document.querySelectorAll('[data-open-modal]').forEach(btn => btn.addEventListener('click', () => {
+      logEvent('cta_click');
       modal.classList.add('open');
       form.style.display = 'block';
       success.style.display = 'none';
+      form.reset();
     }));
+
     document.querySelector('.close').addEventListener('click', () => modal.classList.remove('open'));
     modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
     form.addEventListener('submit', e => {
       e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      data.submitted_at = new Date().toISOString();
+      const submissions = readStore(STORAGE_KEY);
+      submissions.push(data);
+      writeStore(STORAGE_KEY, submissions);
+      logEvent('form_completed');
       form.style.display = 'none';
       success.style.display = 'block';
+    });
+
+    if (new URLSearchParams(window.location.search).get('admin') === '1') {
+      adminTools.hidden = false;
+    }
+
+    exportBtn.addEventListener('click', () => {
+      const submissions = readStore(STORAGE_KEY);
+      const headers = ['name','email','context','motivation','future_test','consent_data','submitted_at'];
+      const escape = value => `"${String(value ?? '').replaceAll('"','""')}"`;
+      const rows = [headers.join(','), ...submissions.map(item => headers.map(h => escape(item[h])).join(','))];
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'spotify_conecta_registros_v3.csv';
+      a.click();
+      URL.revokeObjectURL(url);
     });
   </script>
 </body>
