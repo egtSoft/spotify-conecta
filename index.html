@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotify Conecta — MVP Demo</title>
+  <style>
+    :root{
+      --bg:#dfe7ef;
+      --device:#050505;
+      --screen:#0d0d0d;
+      --panel:#151515;
+      --panel2:#1b1b1b;
+      --line:#2b2b2b;
+      --text:#f5f5f5;
+      --muted:#a7a7a7;
+      --green:#1ed760;
+      --green-soft:#14361f;
+      --shadow:0 24px 70px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background:radial-gradient(circle at top left, rgba(30,215,96,.08), transparent 22%), linear-gradient(180deg,#eef3f8 0%,#dde5ee 100%);
+      color:var(--text);
+    }
+    .page{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      gap:14px;
+      padding:20px 12px 28px;
+    }
+    .topbar{
+      width:min(430px, 100%);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 14px;
+      background:rgba(255,255,255,.55);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:22px;
+      box-shadow:0 10px 30px rgba(0,0,0,.06);
+      backdrop-filter: blur(10px);
+      color:#0f1419;
+    }
+    .title-wrap strong{display:block;font-size:20px;line-height:1.1}
+    .title-wrap span{font-size:12px;color:#47606d;font-weight:600}
+    .mini-logo{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,#1ed760,#169f49);
+      color:#06120b;font-size:21px;font-weight:900;
+      box-shadow:0 8px 20px rgba(30,215,96,.25)
+    }
+    .control-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    button{border:none;cursor:pointer;font-weight:800}
+    .btn{
+      border-radius:999px;padding:10px 14px;background:#f4f7fa;color:#12202a;border:1px solid rgba(0,0,0,.08)
+    }
+    .btn.primary{background:var(--green);color:#07130c}
+    .btn.ghost{background:#ffffff;color:#12202a}
+    .phone-shell{width:min(430px,100%)}
+    .phone-frame{
+      position:relative;background:var(--device);border-radius:42px;padding:12px;box-shadow:var(--shadow);border:2px solid #1e1e1e;
+    }
+    .phone-screen{
+      position:relative;overflow:hidden;min-height:844px;background:linear-gradient(180deg,#111 0%,#0b0b0b 100%);border-radius:32px;border:1px solid #232323;
+    }
+    .dynamic-island{position:absolute;left:50%;transform:translateX(-50%);top:10px;width:118px;height:28px;border-radius:999px;background:#010101;z-index:10}
+    .statusbar{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 8px;font-size:13px;font-weight:700;color:#f8f8f8}
+    .app{padding:6px 14px 104px}
+    .header{display:flex;align-items:center;gap:12px;margin:6px 0 14px}
+    .title{font-size:25px;font-weight:900;margin:0}
+    .sub{font-size:13px;color:var(--muted)}
+    .back,.icon-round,.profile-round,.bell-btn{
+      width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#181818;border:1px solid #292929;color:#fff;font-size:17px
+    }
+    .profile-round{background:linear-gradient(135deg,#25393d,#12181b);font-weight:900;color:#dff6e8}
+    .home-header{display:flex;justify-content:space-between;align-items:center;margin-top:2px;margin-bottom:14px}
+    .home-filters{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin-bottom:14px}
+    .home-chip{padding:9px 14px;border-radius:999px;background:#1a1a1a;border:1px solid #2b2b2b;color:#f1f1f1;font-size:13px;font-weight:800;white-space:nowrap}
+    .home-chip.active{background:var(--green);color:#07130c;border-color:transparent}
+    .card{background:linear-gradient(180deg,#171717,#121212);border:1px solid #2a2a2a;border-radius:22px;padding:16px;margin-bottom:14px}
+    .hero-home{background:linear-gradient(135deg,#1c4028 0%,#102016 62%,#111 100%);position:relative;overflow:hidden;border-color:rgba(30,215,96,.2)}
+    .hero-home::after{content:"";position:absolute;right:-35px;top:-35px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle, rgba(30,215,96,.24), transparent 68%)}
+    .section-title{font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+    .hero-title{font-size:27px;line-height:1.08;font-weight:900;margin:6px 0}
+    .hero-copy{font-size:14px;line-height:1.5;color:#ededed;margin:0 0 14px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .app-btn{border-radius:999px;padding:12px 16px;background:#252525;color:#fff}
+    .app-btn.primary{background:var(--green);color:#06110a}
+    .app-btn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.09)}
+    .mini-nav{display:flex;gap:10px;overflow:auto;padding-bottom:4px;margin-top:12px}
+    .mini-card{min-width:130px;background:#181818;border:1px solid #262626;border-radius:18px;padding:12px}
+    .mini-card b{display:block;margin-bottom:4px;font-size:13px}.mini-card span{font-size:12px;color:#bbb}
+    .home-card{background:#151515;border:1px solid #262626;border-radius:20px;padding:14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+    .home-icon{width:42px;height:42px;border-radius:14px;background:#143120;display:grid;place-items:center;font-size:18px;color:#9cf3b8}
+    .search-box{background:#1b1b1b;border:1px solid #2b2b2b;border-radius:16px;padding:12px 14px;color:#8f8f8f;font-size:14px;margin-bottom:12px}
+    .choice-group{display:grid;gap:12px}.choice-field{background:#161616;border:1px solid #2b2b2b;border-radius:18px;padding:14px}
+    .choice-label{font-size:12px;font-weight:900;color:#98ebb4;margin-bottom:8px}
+    .choice-selected{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .choice-selected strong{display:block;font-size:15px}.choice-selected span{font-size:13px;color:#c7c7c7}
+    .edit-link{font-size:13px;color:var(--green);font-weight:800}
+    .selector-grid{display:grid;gap:10px;margin-top:12px}
+    .option-chip{background:#0f0f0f;border:1px solid #2b2b2b;border-radius:16px;padding:12px}
+    .option-chip.selected{background:rgba(30,215,96,.09);border-color:rgba(30,215,96,.5)}
+    .option-chip strong{display:block;font-size:14px;margin-bottom:3px}.option-chip span{font-size:12px;color:#b7b7b7}
+    .counter{font-size:12px;font-weight:900;color:#aaf2c1;margin-top:10px}
+    .segment{display:flex;background:#151515;border:1px solid #2a2a2a;border-radius:999px;padding:4px;gap:4px}
+    .segment .seg{flex:1;border-radius:999px;padding:10px;background:transparent;color:#d4d4d4;text-align:center;font-size:13px;font-weight:800}
+    .segment .seg.active{background:var(--green);color:#06120a}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:10px 14px;border-radius:999px;border:1px solid #2b2b2b;background:#151515;font-size:13px}
+    .chip.active{background:rgba(30,215,96,.15);border-color:rgba(30,215,96,.4);color:#c2ffd5}
+    .preview{background:linear-gradient(135deg,#122116,#0d140f);border:1px solid rgba(30,215,96,.18);border-radius:22px;padding:14px}
+    .preview-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900;background:rgba(30,215,96,.14);color:#c4ffd6;border:1px solid rgba(30,215,96,.34)}
+    .preview-list{display:grid;gap:8px}.preview-row{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;background:rgba(255,255,255,.04);border-radius:14px;font-size:13px}
+    .feature-list{display:grid;gap:9px;margin-top:14px}.feature-item{display:flex;gap:10px;align-items:flex-start;font-size:14px}.feature-check{color:var(--green);font-weight:900}
+    .sticky-actions{position:sticky;bottom:64px;padding-top:12px;background:linear-gradient(180deg, rgba(11,11,11,0), rgba(11,11,11,.88) 24%, rgba(11,11,11,1))}
+    .action-row{display:flex;gap:10px}.action-row>*{flex:1}
+    .active-banner{background:rgba(30,215,96,.14);border:1px solid rgba(30,215,96,.28);border-radius:18px;padding:12px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+    .countdown{font-size:12px;color:#d4ffe1}.nowplaying{height:6px;border-radius:999px;background:#1d3324;overflow:hidden;margin-top:8px}.nowplaying span{display:block;height:100%;width:58%;background:var(--green)}
+    .notification-card{background:linear-gradient(135deg,#163222,#0f1913);border:1px solid rgba(30,215,96,.25);border-radius:20px;padding:14px;margin-top:10px}.notif-title{font-weight:900;margin-bottom:5px}
+    .notif-badge{position:absolute;right:-2px;top:-4px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--green);display:grid;place-items:center;color:#000;font-size:11px;font-weight:900}
+    .bell-wrap{position:relative}
+    .consent-box{padding:16px;border-radius:18px;background:#121f16;border:1px solid rgba(30,215,96,.22);margin-top:10px}
+    .choice-buttons{display:grid;gap:10px;margin-top:14px}
+    .question-card{background:#14271a;border:1px solid rgba(30,215,96,.22);border-radius:18px;padding:12px}
+    .small-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.tag{padding:8px 10px;border:1px solid #2b2b2b;border-radius:999px;background:#141414;font-size:12px;color:#d1d1d1}
+    .chat-wrap{display:grid;gap:10px;margin-top:12px}.bubble{max-width:82%;padding:12px 14px;border-radius:18px;font-size:14px;line-height:1.42}.bubble small{display:block;font-size:11px;opacity:.68;margin-top:5px}.bubble.left{background:#1a1a1a;border-top-left-radius:8px}.bubble.right{background:#195d2d;color:#f8fff9;margin-left:auto;border-top-right-radius:8px}
+    .composer{background:#151515;border:1px solid #2b2b2b;border-radius:18px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-top:8px}.composer input{flex:1;background:transparent;border:none;outline:none;color:#fff;font-size:14px}
+    .bottom-nav{position:absolute;left:0;right:0;bottom:0;padding:10px 8px 14px;background:linear-gradient(180deg, rgba(11,11,11,0), rgba(11,11,11,.96) 24%, rgba(11,11,11,1));border-top:1px solid #202020;display:flex;justify-content:space-around;gap:2px}
+    .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#d8d8d8;font-size:11px;font-weight:700}.nav-item.active{color:#fff}.nav-item .ico{font-size:19px;line-height:1}
+    .progress{display:flex;gap:6px;justify-content:center;padding-top:4px}.dot{width:8px;height:8px;border-radius:999px;background:#b3bec8}.dot.active{background:#14c354}
+    @media (max-width:520px){.topbar{flex-direction:column;align-items:flex-start}.control-btns{justify-content:flex-start}.phone-screen{min-height:780px}.app{padding-bottom:98px}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mini-logo">♫</div>
+        <div class="title-wrap">
+          <span>DEMO INTERACTIVA</span>
+          <strong>Spotify Conecta</strong>
+        </div>
+      </div>
+      <div class="control-btns">
+        <button class="btn ghost" id="prevBtn">← Anterior</button>
+        <button class="btn primary" id="nextBtn">Siguiente →</button>
+        <button class="btn" id="autoplayBtn">▶ Demo</button>
+        <button class="btn" id="resetBtn">↺ Reiniciar</button>
+      </div>
+    </div>
+
+    <main class="phone-shell">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="dynamic-island"></div>
+          <div class="statusbar"><span>9:41</span><span>▂▃▅ ● 100%</span></div>
+          <div class="app" id="app"></div>
+        </div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </main>
+  </div>
+<script>
+  const bottomNav = `
+    <div class="bottom-nav">
+      <div class="nav-item active"><div class="ico">⌂</div><div>Inicio</div></div>
+      <div class="nav-item"><div class="ico">⌕</div><div>Buscar</div></div>
+      <div class="nav-item"><div class="ico">▤</div><div>Tu biblioteca</div></div>
+      <div class="nav-item"><div class="ico">★</div><div>Premium</div></div>
+      <div class="nav-item"><div class="ico">＋</div><div>Crear</div></div>
+    </div>`;
+
+  const homeTop = `
+    <div class="home-header">
+      <div class="profile-round">E</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="icon-round">⚡</div>
+        <div class="bell-wrap"><div class="bell-btn">🔔</div></div>
+      </div>
+    </div>
+    <div class="home-filters">
+      <div class="home-chip active">Todas</div>
+      <div class="home-chip">Música</div>
+      <div class="home-chip">Podcasts</div>
+    </div>`;
+
+  const screens = [
+    {
+      name:'1. Home de Spotify',
+      render:() => `
+        ${homeTop}
+        <div class="card hero-home">
+          <div class="section-title">Nuevo en Spotify</div>
+          <div class="hero-title">Tu próxima conversación puede empezar con una canción</div>
+          <p class="hero-copy">Elige tres canciones, activa Spotify Conecta por un rato y descubre si alguien en el mismo espacio comparte tus gustos.</p>
+          <div class="row">
+            <button class="app-btn primary" onclick="goTo(1)">Probar Spotify Conecta</button>
+            <button class="app-btn ghost" onclick="goTo(1)">Ver cómo funciona</button>
+          </div>
+        </div>
+        <div class="mini-nav">
+          <div class="mini-card"><b>Mix diario</b><span>Hecho para tu mañana</span></div>
+          <div class="mini-card"><b>Tendencias Bogotá</b><span>Lo más escuchado hoy</span></div>
+          <div class="mini-card"><b>Podcasts</b><span>Recomendados para ti</span></div>
+        </div>
+        <div class="home-card" style="margin-top:14px"><div class="home-icon">🎧</div><div><strong>Tu música, a tu manera</strong><div class="sub">Nuevos lanzamientos basados en tus gustos.</div></div></div>
+        <div class="home-card"><div class="home-icon">✨</div><div><strong>Descubre artistas de Bogotá</strong><div class="sub">Listas curadas para caminar la ciudad.</div></div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'2. Elegir qué mostrar',
+      render:() => `
+        <div class="header"><div class="back" onclick="goTo(0)">←</div><div><div class="title">Elige qué mostrar</div><div class="sub">Solo compartes lo que tú selecciones</div></div></div>
+        <div class="search-box">🔎 Buscar canción, artista o podcast</div>
+        <div class="choice-group">
+          <div class="choice-field"><div class="choice-label">Una canción que me representa</div><div class="choice-selected"><div><strong>La Tierra del Olvido</strong><span>Carlos Vives</span></div><span class="edit-link">Cambiar</span></div><div class="selector-grid"><div class="option-chip selected"><strong>La Tierra del Olvido</strong><span>Carlos Vives</span></div><div class="option-chip"><strong>Amárrame</strong><span>Mon Laferte · Juanes</span></div><div class="option-chip"><strong>Si tú supieras</strong><span>LosPetitFellas</span></div></div></div>
+          <div class="choice-field"><div class="choice-label">Artista o género que suelo escuchar</div><div class="choice-selected"><div><strong>Indie latino / Cultura Profética</strong><span>Afinidad relajada y conversable</span></div><span class="edit-link">Cambiar</span></div><div class="selector-grid"><div class="option-chip selected"><strong>Indie latino / Cultura Profética</strong><span>Sugerencia basada en tus escuchas</span></div><div class="option-chip"><strong>Rock alternativo</strong><span>Zoé · Bomba Estéreo</span></div><div class="option-chip"><strong>Pop colombiano</strong><span>Morat · Monsieur Periné</span></div></div></div>
+          <div class="choice-field"><div class="choice-label">Podcast que recomendaría</div><div class="choice-selected"><div><strong>A fondo</strong><span>Podcast seleccionado</span></div><span class="edit-link">Cambiar</span></div><div class="selector-grid"><div class="option-chip selected"><strong>A fondo</strong><span>Historias y conversaciones</span></div><div class="option-chip"><strong>Presunto Podcast</strong><span>Medios y actualidad</span></div><div class="option-chip"><strong>En terapia</strong><span>Bienestar y vida cotidiana</span></div></div><div class="counter">3 de 3 elementos elegidos</div></div>
+        </div>
+        <div class="sticky-actions"><div class="action-row"><button class="app-btn ghost" onclick="goTo(0)">Volver</button><button class="app-btn primary" onclick="goTo(2)">Continuar</button></div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'3. Alias y contexto',
+      render:() => `
+        <div class="header"><div class="back" onclick="goTo(1)">←</div><div><div class="title">Configura tu activación</div><div class="sub">Tú decides cómo, dónde y por cuánto tiempo</div></div></div>
+        <div class="card"><div class="choice-label">¿Cómo quieres aparecer?</div><div class="segment"><div class="seg active">Alias</div><div class="seg">Nombre</div></div><div class="search-box" style="margin-top:12px;color:#f0f0f0">Alias sugerido: <strong>AndesSonoros</strong></div></div>
+        <div class="card"><div class="choice-label">Visible en</div><div class="chips"><div class="chip active">☕ Café o espacio cultural</div><div class="chip">🎓 Universidad</div><div class="chip">🎟 Evento</div></div></div>
+        <div class="card"><div class="choice-label">Duración</div><div class="chips"><div class="chip">30 min</div><div class="chip active">1 hora</div><div class="chip">Hasta terminar evento</div></div><div class="sub" style="margin-top:10px">Se apagará automáticamente al terminar el tiempo.</div></div>
+        <div class="sticky-actions"><div class="action-row"><button class="app-btn ghost" onclick="goTo(1)">Volver</button><button class="app-btn primary" onclick="goTo(3)">Revisar antes de activar</button></div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'4. Vista previa',
+      render:() => `
+        <div class="header"><div class="back" onclick="goTo(2)">←</div><div><div class="title">Vista previa</div><div class="sub">Así te verán otras personas</div></div></div>
+        <div class="preview"><div class="preview-top"><div><div class="pill">✨ Alias · AndesSonoros</div><div class="sub" style="margin-top:8px">Activo en Café o espacio cultural · 1 hora</div></div><div style="font-size:28px">🎵</div></div><div class="preview-list"><div class="preview-row"><span>Una canción que me representa</span><strong>La Tierra del Olvido</strong></div><div class="preview-row"><span>Artista o género</span><strong>Indie latino / Cultura Profética</strong></div><div class="preview-row"><span>Podcast recomendado</span><strong>A fondo</strong></div></div></div>
+        <div class="feature-list"><div class="feature-item"><span class="feature-check">✓</span><span>Nadie ve tu ubicación exacta.</span></div><div class="feature-item"><span class="feature-check">✓</span><span>Solo avanzará una conversación si ambas personas quieren.</span></div><div class="feature-item"><span class="feature-check">✓</span><span>La experiencia se apaga sola al terminar el tiempo.</span></div></div>
+        <div class="sticky-actions"><div class="action-row"><button class="app-btn ghost" onclick="goTo(2)">Editar</button><button class="app-btn primary" onclick="goTo(4)">Activar Spotify Conecta</button></div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'5. Activo en Home',
+      render:() => `
+        ${homeTop.replace('🔔','🔔')}
+        <div class="active-banner"><div><strong>Conecta activo · Café o espacio cultural</strong><div class="countdown">Quedan 48 minutos</div><div class="nowplaying"><span></span></div></div><button class="app-btn ghost" style="padding:10px 12px">Pausar</button></div>
+        <div class="notification-card"><div class="notif-title">🔔 Encontramos algo en común</div><div class="sub">Alguien en este espacio también eligió <strong>La Tierra del Olvido</strong>.</div><div class="row" style="margin-top:12px"><button class="app-btn primary" onclick="goTo(5)">Ver coincidencia</button><button class="app-btn ghost">Ahora no</button></div></div>
+        <div class="mini-nav" style="margin-top:14px"><div class="mini-card"><b>Mix diario</b><span>Conecta sigue activo mientras escuchas música</span></div><div class="mini-card"><b>Descubrimientos</b><span>Nuevas canciones para ti</span></div></div>
+        <div class="home-card" style="margin-top:14px"><div class="home-icon">🎶</div><div><strong>Tu mezcla del día</strong><div class="sub">Sigue escuchando mientras Conecta está activo.</div></div></div>
+        <div class="home-card"><div class="home-icon">🎙</div><div><strong>Podcasts para hoy</strong><div class="sub">Nuevas recomendaciones para esta tarde.</div></div></div>
+        <div style="position:absolute;right:18px;top:62px" class="bell-wrap"><div class="notif-badge">1</div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'6. Coincidencia encontrada',
+      render:() => `
+        <div class="header"><div class="back" onclick="goTo(4)">←</div><div><div class="title">Coincidencia encontrada</div><div class="sub">Una afinidad musical dentro del mismo espacio</div></div></div>
+        <div class="card"><div class="pill">☕ Café o espacio cultural</div><h3 style="margin:14px 0 8px;font-size:21px">AndesSonoros y otra persona comparten algo en común</h3><p class="sub" style="line-height:1.5">Ambos eligieron <strong style="color:#fff">La Tierra del Olvido</strong>. También hay cercanía en <strong style="color:#fff">indie latino</strong>.</p></div>
+        <div class="consent-box"><strong>¿Te gustaría abrir una conversación?</strong><div class="sub" style="margin-top:8px">La otra persona solo sabrá que quieres conversar si también acepta.</div><div class="choice-buttons"><button class="app-btn primary" onclick="goTo(6)">Sí, me gustaría conversar</button><button class="app-btn ghost">Ahora no</button></div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'7. Consentimiento mutuo',
+      render:() => `
+        <div class="header"><div class="back" onclick="goTo(5)">←</div><div><div class="title">Listo: ambos aceptaron</div><div class="sub">Ahora pueden empezar a conversar</div></div></div>
+        <div class="card" style="text-align:center;padding:20px"><div style="font-size:46px;margin-bottom:6px">🎧↔🎧</div><h3 style="font-size:22px;margin:6px 0 10px">Hay coincidencia mutua</h3><p class="sub" style="line-height:1.5">Los dos aceptaron conversar a partir de una afinidad musical. No se muestra ubicación exacta y pueden salir cuando quieran.</p></div>
+        <div class="question-card"><div class="choice-label">Pregunta que los unió</div><strong style="font-size:18px;line-height:1.35">¿Qué canción recomendarías para caminar por Bogotá?</strong><div class="small-actions"><span class="tag">🎵 Ver otra pregunta</span><span class="tag">🎙 Hablar de podcasts</span><span class="tag">📀 Compartir playlist</span></div></div>
+        <div class="sticky-actions"><div class="action-row"><button class="app-btn ghost">Cancelar</button><button class="app-btn primary" onclick="goTo(7)">Empezar conversación</button></div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'8. Conversación dentro de Spotify',
+      render:() => `
+        <div class="header"><div class="back" onclick="goTo(6)">←</div><div style="flex:1"><div class="title">Conecta</div><div class="sub">Tu música te conecta</div></div><div class="icon-round">⋯</div></div>
+        <div class="question-card"><div class="choice-label">Pregunta que los unió</div><strong>¿Qué canción recomendarías para caminar por Bogotá?</strong></div>
+        <div class="chat-wrap"><div class="bubble left">¡Hola! Yo diría que “Bogotá” de Distrito Especial. Es un clásico que siempre me conecta con la ciudad.<small>10:14</small></div><div class="bubble right">Buenísima elección 🙌 También me gusta “Si tú supieras” de LosPetitFellas. Tiene toda esa vibra bogotana.<small>10:16</small></div><div class="bubble left">Totalmente. Esa combinación es perfecta para una caminata por Chapinero.<small>10:18</small></div></div>
+        <div class="small-actions"><span class="tag">🎵 Recomendar canción</span><span class="tag">🎙 Hablar de podcasts</span><span class="tag">📀 Compartir playlist</span></div>
+        <div class="composer"><span>＋</span><input value="¿Tienes alguna playlist que recomiendes para descubrir más artistas de acá?" /><span style="font-size:20px;color:var(--green)">➤</span></div>
+        <div class="sticky-actions"><div class="action-row"><button class="app-btn ghost">Finalizar</button><button class="app-btn primary" onclick="goTo(8)">Ver cierre</button></div></div>
+        ${bottomNav}`
+    },
+    {
+      name:'9. Cierre',
+      render:() => `
+        <div class="header"><div class="back" onclick="goTo(7)">←</div><div><div class="title">Spotify Conecta finalizó</div><div class="sub">Tu sesión se desactivó correctamente</div></div></div>
+        <div class="card" style="text-align:center"><div style="font-size:44px;margin-bottom:8px">✅</div><h3 style="font-size:22px;margin:8px 0">Sesión terminada</h3><p class="sub">Ya no estás visible para otras personas.</p></div>
+        <div class="card"><div class="choice-label">Antes de cerrar</div><h3 style="margin:6px 0 12px;font-size:20px">¿La pregunta te ayudó a iniciar la conversación?</h3><div class="chips"><div class="chip active">Sí, bastante</div><div class="chip">Más o menos</div><div class="chip">No conversé</div></div></div>
+        <div class="card"><div class="choice-label">¿Te sentiste seguro durante la experiencia?</div><div class="chips"><div class="chip active">Sí</div><div class="chip">No del todo</div></div></div>
+        <div class="sticky-actions"><div class="action-row"><button class="app-btn ghost" onclick="goTo(0)">Volver al Home</button><button class="app-btn primary" onclick="goTo(0)">Reiniciar demo</button></div></div>
+        ${bottomNav}`
+    }
+  ];
+
+  let current = 0, autoplay = null;
+  const app = document.getElementById('app');
+  const progress = document.getElementById('progress');
+
+  function renderProgress(){ progress.innerHTML = screens.map((_,i)=>`<div class="dot ${i<=current?'active':''}"></div>`).join(''); }
+  function render(){
+    app.innerHTML = screens[current].render();
+    renderProgress();
+    document.getElementById('prevBtn').disabled = current===0;
+    document.getElementById('nextBtn').disabled = current===screens.length-1;
+  }
+  function goTo(i){ current = Math.max(0, Math.min(screens.length-1, i)); render(); }
+  window.goTo = goTo;
+  function next(){ if(current < screens.length-1) goTo(current+1); }
+  function prev(){ if(current > 0) goTo(current-1); }
+  document.getElementById('nextBtn').onclick = next;
+  document.getElementById('prevBtn').onclick = prev;
+  document.getElementById('resetBtn').onclick = ()=>{ stopAutoplay(); goTo(0); };
+  const autoplayBtn = document.getElementById('autoplayBtn');
+  function stopAutoplay(){ clearInterval(autoplay); autoplay = null; autoplayBtn.textContent='▶ Demo'; }
+  autoplayBtn.onclick = ()=>{
+    if(autoplay){ stopAutoplay(); return; }
+    autoplayBtn.textContent='⏸ Pausar';
+    autoplay = setInterval(()=>{ if(current >= screens.length-1){ stopAutoplay(); return; } next(); }, 3800);
+  };
+  render();
+</script>
+</body>
+</html>
