@@ -19,15 +19,16 @@
       --shadow:0 24px 70px rgba(0,0,0,.28);
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{min-height:100%;height:auto;background:#e7edf3}
     body{
       margin:0;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background:radial-gradient(circle at top left, rgba(30,215,96,.08), transparent 22%), linear-gradient(180deg,#eef3f8 0%,#dde5ee 100%);
+      background:#e7edf3;
       color:var(--text);
     }
     .page{
-      min-height:100%;
+      min-height:100vh;
+      background:#e7edf3;
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -139,7 +140,8 @@
     .bottom-nav{position:absolute;left:0;right:0;bottom:0;padding:10px 8px 14px;background:linear-gradient(180deg, rgba(11,11,11,0), rgba(11,11,11,.96) 24%, rgba(11,11,11,1));border-top:1px solid #202020;display:flex;justify-content:space-around;gap:2px}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#d8d8d8;font-size:11px;font-weight:700}.nav-item.active{color:#fff}.nav-item .ico{font-size:19px;line-height:1}
     .progress{display:flex;gap:6px;justify-content:center;padding-top:4px}.dot{width:8px;height:8px;border-radius:999px;background:#b3bec8}.dot.active{background:#14c354}
-    @media (max-width:520px){.topbar{flex-direction:column;align-items:flex-start}.control-btns{justify-content:flex-start}.phone-screen{min-height:780px}.app{padding-bottom:98px}}
+    .screen-scroll{max-height:620px;overflow-y:auto;padding-right:4px;padding-bottom:12px;scrollbar-width:thin;scrollbar-color:#3a3a3a transparent}.screen-scroll::-webkit-scrollbar{width:6px}.screen-scroll::-webkit-scrollbar-thumb{background:#3a3a3a;border-radius:999px}.screen-scroll::-webkit-scrollbar-track{background:transparent}
+    @media (max-width:520px){.topbar{flex-direction:column;align-items:flex-start}.control-btns{justify-content:flex-start}.phone-screen{min-height:780px}.app{padding-bottom:98px}.screen-scroll{max-height:560px}}
   </style>
 </head>
 <body>
@@ -222,6 +224,7 @@
       name:'2. Elegir qué mostrar',
       render:() => `
         <div class="header"><div class="back" onclick="goTo(0)">←</div><div><div class="title">Elige qué mostrar</div><div class="sub">Solo compartes lo que tú selecciones</div></div></div>
+        <div class="screen-scroll">
         <div class="search-box">🔎 Buscar canción, artista o podcast</div>
         <div class="choice-group">
           <div class="choice-field"><div class="choice-label">Una canción que me representa</div><div class="choice-selected"><div><strong>La Tierra del Olvido</strong><span>Carlos Vives</span></div><span class="edit-link">Cambiar</span></div><div class="selector-grid"><div class="option-chip selected"><strong>La Tierra del Olvido</strong><span>Carlos Vives</span></div><div class="option-chip"><strong>Amárrame</strong><span>Mon Laferte · Juanes</span></div><div class="option-chip"><strong>Si tú supieras</strong><span>LosPetitFellas</span></div></div></div>
@@ -229,6 +232,7 @@
           <div class="choice-field"><div class="choice-label">Podcast que recomendaría</div><div class="choice-selected"><div><strong>A fondo</strong><span>Podcast seleccionado</span></div><span class="edit-link">Cambiar</span></div><div class="selector-grid"><div class="option-chip selected"><strong>A fondo</strong><span>Historias y conversaciones</span></div><div class="option-chip"><strong>Presunto Podcast</strong><span>Medios y actualidad</span></div><div class="option-chip"><strong>En terapia</strong><span>Bienestar y vida cotidiana</span></div></div><div class="counter">3 de 3 elementos elegidos</div></div>
         </div>
         <div class="sticky-actions"><div class="action-row"><button class="app-btn ghost" onclick="goTo(0)">Volver</button><button class="app-btn primary" onclick="goTo(2)">Continuar</button></div></div>
+        </div>
         ${bottomNav}`
     },
     {
